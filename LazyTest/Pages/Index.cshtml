@@ -1,0 +1,53 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+
+    var submitText = Model.TestResultDisplayData==null? "Create/Load Test" : "Run a new Test";
+}
+
+<div class="text-center">
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="SiteMapUrl">Sitemap Url</label>
+            <input asp-for="SiteMapUrl" value="@Model.SiteMapUrl" type="url" placeholder="https://example.com/sitemap.xml" class="form-control" patten="[Hh][Tt][Tt][Pp][Ss]?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?" />
+    </div>
+        <input type="file" name="TestFile" class="btn">
+        <button type="submit" class="btn btn-primary">@submitText</button>
+        @if (Model.TestResultDisplayData != null)
+        {
+             <a class="btn btn-primary" asp-page-handler="SaveTest">Save The Test </a>
+        }
+      
+    </form>
+    <h1 class="display-4">Result</h1>
+    @if (Model.TestResultDisplayData?.TestResultItem?.Any() ?? false)
+    {
+        <table class="table" border="1" cellpadding="1" width="100%">
+            <tr style="background-color:darkslategray;color:white">
+                <td>Url</td>
+                <td>Status</td>
+                <td>Content Length</td>
+                <td>Dom Count</td>
+                <td>Note</td>
+            </tr>
+        @foreach (var testpage in Model.TestResultDisplayData?.TestResultItem ?? Enumerable.Empty<DisplayModel>().ToList())
+        {
+                <tr style="background-color:@testpage.Color">
+                    <td>@testpage?.Url</td>
+                    <td>@testpage?.StatusCode/@testpage?.LastStatusCode</td>
+                    <td>@testpage?.ContentLength/ @testpage?.LastContentLength</td>
+                    <td>@testpage?.DOMCount/ @testpage?.LastDOMCount</td>
+                    <td> &nbsp;@testpage?.ExceptionMessage</td>
+                    </tr>
+          
+        }
+
+        </table>
+    }
+    else
+    {
+        <h2>@Model.Message</h2>
+    }
+
+</div>
