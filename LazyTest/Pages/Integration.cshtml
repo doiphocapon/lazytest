@@ -1,0 +1,41 @@
+﻿@page
+@model LazyTest.Pages.IntegrationModel
+@{
+}
+@{
+    ViewData["Title"] = "Script Integration";
+}
+<div class="container mt-4">
+    <h1 class="text-center">PowerShell Script Integration</h1>
+    <div class="alert alert-info">
+        <h4 class="alert-heading">How to Use the PowerShell Script</h4>
+        <p>
+            1. Download the PowerShell script by clicking the button below.
+        </p>
+        <p>
+            2. Open a PowerShell terminal.
+        </p>
+        <p>
+            3. Navigate to the directory where you saved the script.
+        </p>
+        <p>
+            4. Run the script with the appropriate parameters. Here’s a brief explanation of each parameter:
+        </p>
+        <ul>
+            <li><strong>sitemapUrl:</strong> Can be the URL of a sitemap XML file or just the domain of the website you want to test.</li>
+            <li><strong>domcount:</strong> Enables or disables DOM (Document Object Model) counting. Enabling it will take longer as it counts the number of elements on the page.</li>
+            <li><strong>image:</strong> Determines whether to scan for images associated with the URLs. Set to <code>true</code> to include image scanning, or <code>false</code> to skip it.</li>
+            <li><strong>token:</strong> Used to group tests and track them. This allows you to check the results of the latest test or differentiate between different test scenarios.</li>
+        </ul>
+        <p>
+            Example usage:
+        </p>
+        <pre><code>.\script.ps1 -image $true -sitemapUrl "https://example.com/sitemap.xml" -domcount $false -token "your_token_here"</code></pre>
+        <p>
+            Replace the parameter values with the ones you need for your specific test case.
+        </p>
+    </div>
+    <div class="text-center mt-4">
+        <a href="~/Scripts/script.ps1" class="btn btn-primary">Download Script</a>
+    </div>
+</div>

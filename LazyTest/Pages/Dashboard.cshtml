@@ -1,0 +1,42 @@
+﻿@page
+@using LazyTest.Helpers;
+@model LazyTest.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard page";
+}
+@if (Model.NeedPageRefresh)
+{
+    <meta http-equiv="refresh" content="5" />
+}
+
+    <table>
+        <thead>
+            <tr>
+
+                <th>Sitemap Url</th>
+                <th></th>
+                <th>Date</th>
+                <th>Total Urls</th>
+                <th>Scanned Urls</th>
+                <th>Token</th>
+                <th>Running</th>
+                <th></th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var testSite in Model.TestSites)
+            {
+                <tr>
+                <td><a asp-page="/TestSite" asp-route-id="@testSite.WebsiteId">@testSite.SitemapUrl</a></td>
+                <td>&nbsp;&nbsp;&nbsp;</td>
+                <td>@TimeZoneHelper.ConvertGmtToSydney(testSite.Created)</td>
+                <td>@testSite.TotalUrls</td>
+                <td>@testSite.TestedUrls</td>
+                <td>@testSite.WebsiteGuid</td>
+                <td><div class="@(testSite.IsTestRunning?"loader":"")"></div></td>
+                <td><a  asp-page-handler="DeleteSite" asp-route-id="@testSite.WebsiteId">Delete</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>

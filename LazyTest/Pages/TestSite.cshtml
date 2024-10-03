@@ -1,0 +1,157 @@
+﻿@page
+@using Extentions;
+@model LazyTest.Pages.TestSiteModel
+@{
+}
+<h1>@Model.TestSite.SitemapUrl</h1>
+
+<canvas id="myPieChart" width="400" height="200"></canvas>
+
+
+<h1 class="display-4">Summary</h1>
+@if (Model.HighlightData?.TestResultItem?.Any() ?? false)
+{
+    <table class="table" border="1" cellpadding="1" width="100%">
+        <tr style="background-color:darkslategray;color:white">
+            <td>Url</td>
+            <td>Status</td>
+            <td>Content length</td>
+            <td>Dom count</td>
+            <td>Response time(Ms)</td>
+        </tr>
+
+
+        @foreach (var testpage in Model.HighlightData.TestResultItem)
+        {
+
+            var statusCode = $"<span class=\"{testpage?.StatusCode}\">{testpage?.StatusCode}</span>";
+            if (!string.IsNullOrEmpty(testpage?.LastStatusCode) && testpage?.LastStatusCode != testpage?.StatusCode)
+            {
+                statusCode = $"<span class=\"{testpage?.StatusCode}\">{testpage?.StatusCode}</span>/<span class=\"{testpage?.LastStatusCode}\">{testpage?.LastStatusCode}</span>";
+            }
+            var contentLength = testpage?.ContentLength.ToKB();
+            if (testpage?.LastContentLength > 0 && testpage?.LastContentLength != testpage?.ContentLength)
+            {
+                contentLength = $"{testpage?.ContentLength.ToKB()}/{testpage?.LastContentLength.ToKB()}";
+            }
+            var domCount = testpage?.DOMCount.ToString();
+            if (testpage?.LastDOMCount > 0 && testpage?.LastDOMCount != testpage?.DOMCount)
+            {
+                domCount = $"{testpage?.DOMCount}/{testpage?.LastDOMCount}";
+            }
+            var responseTime = testpage?.ResponseTime.ToString();
+            if (testpage?.LastResponseTime > 0 && testpage?.LastResponseTime != testpage?.ResponseTime)
+            {
+                responseTime = $"{testpage?.ResponseTime}/{testpage?.LastResponseTime}";
+            }
+
+
+            <tr>
+                <td style="text-align:left"><a href="@testpage?.Url" target="_blank">@testpage?.Url</a></td>
+                <td>@Html.Raw(statusCode)</td>
+                <td>@contentLength</td>
+                <td>@domCount</td>
+                <td>@responseTime</td>
+            </tr>
+
+        }
+
+
+    </table>
+}
+else
+{
+    <p>Good job! No highlighted data; the result looks good. Please check the details.</p>
+
+}
+
+
+
+<p>
+    <a data-bs-toggle="collapse" href="#collapseResult" role="button" aria-expanded="false" aria-controls="collapseResult">
+        Show Detail Result
+    </a>
+</p>
+<div class="collapse" id="collapseResult">
+    <div class="card card-body">
+        <h1 class="display-4">Result</h1>
+        @if (Model.TestResultDisplayData?.TestResultItem?.Any() ?? false)
+        {
+            <table class="table" border="1" cellpadding="1" width="100%">
+                <tr style="background-color:darkslategray;color:white">
+                    <td>Url</td>
+                    <td>Status</td>
+                    <td>Content length</td>
+                    <td>Dom count</td>
+                    <td>Response time(Ms)</td>
+                </tr>
+
+          
+                @foreach (var testpage in Model.TestResultDisplayData.TestResultItem)
+                {
+
+                    var statusCode = $"<span class=\"{testpage?.StatusCode}\">{testpage?.StatusCode}</span>";
+                    if (!string.IsNullOrEmpty(testpage?.LastStatusCode) && testpage?.LastStatusCode != testpage?.StatusCode)
+                    {
+                        statusCode = $"<span class=\"{testpage?.StatusCode}\">{testpage?.StatusCode}</span>/<span class=\"{testpage?.LastStatusCode}\">{testpage?.LastStatusCode}</span>";
+                    }
+                    var contentLength = testpage?.ContentLength.ToKB();
+                    if (testpage?.LastContentLength > 0 && testpage?.LastContentLength != testpage?.ContentLength)
+                    {
+                        contentLength = $"{testpage?.ContentLength.ToKB()}/{testpage?.LastContentLength.ToKB()}";
+                    }
+                    var domCount = testpage?.DOMCount.ToString();
+                    if (testpage?.LastDOMCount>0 && testpage?.LastDOMCount != testpage?.DOMCount)
+                    {
+                        domCount = $"{testpage?.DOMCount}/{testpage?.LastDOMCount}";
+                    }
+                    var responseTime = testpage?.ResponseTime.ToString();
+                    if (testpage?.LastResponseTime >0 && testpage?.LastResponseTime != testpage?.ResponseTime)
+                    {
+                        responseTime = $"{testpage?.ResponseTime}/{testpage?.LastResponseTime}";
+                    }
+
+
+                    <tr>
+                        <td style="text-align:left"><a href="@testpage?.Url" target="_blank">@testpage?.Url</a></td>
+                        <td>@Html.Raw(statusCode)</td>
+                        <td>@contentLength</td>
+                        <td>@domCount</td>
+                        <td>@responseTime</td>
+                    </tr>
+
+                }
+                
+           
+            </table>
+        }
+        
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById('myPieChart').getContext('2d');
+        var chartData = @Html.Raw(Model.ChartDataJson);
+
+        var myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
